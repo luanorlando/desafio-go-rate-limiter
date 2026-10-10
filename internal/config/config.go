@@ -8,14 +8,15 @@ import (
 )
 
 type Conf struct {
-	Port              string        `mapstructure:"PORT"`
-	RedisAddr         string        `mapstructure:"REDIS_ADDR"`
-	RedisPassword     string        `mapstructure:"REDIS_PASSWORD"`
-	RedisDB           int           `mapstructure:"REDIS_DB"`
-	DefaultLimitIP    int           `mapstructure:"DEFAULT_LIMIT_IP"`
-	DefaultLimitToken int           `mapstructure:"DEFAULT_LIMIT_TOKEN"`
-	BlockDurationMin  int           `mapstructure:"BLOCK_DURATION_MINUTES"`
+	Port              string `mapstructure:"PORT"`
+	RedisAddr         string `mapstructure:"REDIS_ADDR"`
+	RedisPassword     string `mapstructure:"REDIS_PASSWORD"`
+	RedisDB           int    `mapstructure:"REDIS_DB"`
+	DefaultLimitIP    int    `mapstructure:"DEFAULT_LIMIT_IP"`
+	DefaultLimitToken int    `mapstructure:"DEFAULT_LIMIT_TOKEN"`
+	BlockDurationMin  int    `mapstructure:"BLOCK_DURATION_MINUTES"`
 	BlockDuration     time.Duration
+}
 
 func LoadConfig(path string) (*Conf, error) {
 	var cfg Conf
