@@ -5,10 +5,10 @@ O sistema deve ser capaz de limitar o tráfego com base no IP do solicitante ou 
 # Regras de Negócio (Critérios de Limitação)
 O Rate Limiter deve operar com base em duas estratégias principais:
 
-- [ ] **Limitação por IP:** Restringe o número máximo de requisições por segundo recebidas de um único endereço IP.
-- [ ] **Limitação por Token:** Restringe o número máximo de requisições por segundo baseadas em um token de acesso único.
-- [ ] **Header:** O token deve ser verificado no header API_KEY: <TOKEN>.
-- [ ] **Precedência** (Regra de Ouro): As configurações do Token devem se sobrepor às do IP.
+- [x] **Limitação por IP:** Restringe o número máximo de requisições por segundo recebidas de um único endereço IP.
+- [x] **Limitação por Token:** Restringe o número máximo de requisições por segundo baseadas em um token de acesso único.
+- [x] **Header:** O token deve ser verificado no header API_KEY: <TOKEN>.
+- [x] **Precedência** (Regra de Ouro): As configurações do Token devem se sobrepor às do IP.
 
 > Exemplo: Se o limite global por IP for 10 req/s, mas um token específico tiver permissão para 100 req/s, o sistema deve respeitar o limite do token (100 req/s).
  
@@ -40,13 +40,13 @@ Tempo de bloqueio (em caso de excesso).
 Configurações de conexão com Redis.
  
 # Entregável
-- [ ] **Código Fonte:** Repositório contendo a implementação completa.
-- [ ] **Infraestrutura:**
+- [x] **Código Fonte:** Repositório contendo a implementação completa.
+ **Infraestrutura:**
 - [ ] **Dockerfile para a aplicação:** docker-compose.yaml que suba a aplicação (na porta 8080) e o banco Redis.
 - [ ] **Documentação (README):** Explique como configurar o limiter, como alterar as estratégias e como executar o projeto.
 - [ ] **Testes Automatizados**: Testes que demonstrem a eficácia do limiter e a lógica de precedência (Token > IP).
  
 # Regras de Entrega
-- [ ] **Repositório Único:** O repositório deve conter apenas o projeto em questão.
-- [ ] **Branch Principal:** Todo o código deve estar na branch main.
+- [x] **Repositório Único:** O repositório deve conter apenas o projeto em questão.
+- [x] **Branch Principal:** Todo o código deve estar na branch main.
 - [ ] **Execução:** O avaliador deve conseguir rodar o projeto e os testes utilizando apenas o Docker/Docker Compose.
