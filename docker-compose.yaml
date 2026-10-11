@@ -21,6 +21,8 @@ services:
       - REDIS_HOST=redis
       - REDIS_ADDR=redis:6379
       - REDIS_PORT=6379
+    env_file:
+      - .env
     depends_on:
       redis:
         condition: service_healthy
