@@ -27,6 +27,24 @@ services:
     networks:
       - rate-limiter-net
 
+  app-test:
+    build: .
+    container_name: app_rate_limiter_tests
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_ADDR=redis:6379
+      - REDIS_PORT=6379
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - rate-limiter-net
+    # Sobrescreve o comando padrão do Dockerfile para rodar todos os testes com tags de integração
+    command: ["go", "test", "-v", "-tags=integration", "./..."]
+
+volumes:
+  redis_data:
+
 networks:
   rate-limiter-net:
     driver: bridge
