@@ -1,7 +1,137 @@
 # Objetivo
 Desenvolver um Rate Limiter em Go que funcione como um middleware para controlar o fluxo de requisições de um serviço web.
 O sistema deve ser capaz de limitar o tráfego com base no IP do solicitante ou em um Token de acesso, utilizando o Redis para persistência e orquestração.
- 
+
+# Setup
+
+Para configurar o projeto você pode criar um arquivo .env, já existe um arquivo .env.example de referência.
+
+Configurações disponíveis
+|Variável|Descrição|Valor Padrão|
+|--------|---------|------------|
+|PORT|Porta em que o servidor HTTP irá rodar|8080|
+|REDIS_ADDR|Endereço do servidor Redis (host:porta)|localhost:6379 (ou redis:6379 no Docker)|
+|PORT|Porta em que o servidor HTTP irá rodar|8080|
+|REDIS_DB|Número do banco de dados do Redis|0|
+|DEFAULT_LIMIT_IP|Limite máximo de requisições por segundo por IP|10|
+|DEFAULT_LIMIT_TOKEN|Limite máximo padrão para Tokens específicos|100|
+BLOCK_DURATION_MINUTES|Tempo de bloqueio temporário (em minutos) após estourar o limite|5|
+
+Para validação das regras os valores a serem alterados são
+|Variável|Valor Padrão|
+|--------|------------|
+|DEFAULT_LIMIT_IP|10|
+|DEFAULT_LIMIT_TOKEN|100|
+|BLOCK_DURATION_MINUTES|5|
+
+> Altere os valores em .env 
+
+Exemplo do trecho com Docker
+```go
+DEFAULT_LIMIT_IP=4
+DEFAULT_LIMIT_TOKEN=10
+BLOCK_DURATION_MINUTES=5
+```
+
+# Como Executar o Projeto com Docker
+Para subir a aplicação e o Redis integrados com um único comando, execute:
+
+```shell
+docker compose up --build -d
+```
+
+Para derrubar os containers e limpar os recursos:
+```shell
+docker compose down
+```
+
+Como Executar os Testes Automatizados suba o redis
+```shell
+docker compose up -d redis
+# docker compose up --build app-test
+```
+
+e depois rode os testes
+```shell
+go test -v -tags=integration ./...
+```
+
+# Como Testar a API
+No projeto tem uma pasta `api/` e um arquivo `.http` para testes. Você pode escolher qual usar. As configurações já setadas no projeto é possível testar o caso de sucesso usando qualquer uma das opções, ou pode usar o próprio navegador, nesse exemplo será tudo via terminal
+
+### Sucesso limite por IP
+```shell
+curl -i http://localhost:8080/
+```
+
+> Resultado esperado
+```text
+HTTP/1.1 200 OK
+Date: Sun, 11 Oct 2026 02:59:30 GMT
+Content-Length: 41
+Content-Type: text/plain; charset=utf-8
+
+Rate Limiter, OK! Requisição permitida.
+```
+
+### Sucesso priorizando Token
+```shell
+curl -i -H "API_KEY: meu-token-super-secreto-123" http://localhost:8080/
+```
+
+> Resultado esperado
+```text
+HTTP/1.1 200 OK
+Date: Sun, 11 Oct 2026 03:00:58 GMT
+Content-Length: 41
+Content-Type: text/plain; charset=utf-8
+
+Rate Limiter, OK! Requisição permitida.
+```
+
+## Agora vamos testar validando as regras.
+É possível testar segundo fielmente os mesmo valores, porém para uma melhor visualização lembre de diminiur os valores da configurações.
+
+para ficar mais claro, pause sua aplicação e subia a aplicação novamente.
+Altere as propriedades para seguir os valores da tabela abaixo do arquivo .env
+
+|Variável|Valor Padrão|
+|--------|------------|
+|DEFAULT_LIMIT_IP|4|
+|DEFAULT_LIMIT_TOKEN|10|
+|BLOCK_DURATION_MINUTES|5|
+
+### Sucesso com limite por IP
+Executando os request ao mesmo tempo para garantir a validação da regra
+```shell
+for i in {1..6}; do                
+  curl -s -i http://localhost:8080/ &
+done
+wait
+```
+
+> Resultado esperado: 4 resultados com sucesso e 2 com erros
+
+## Sucesso com limite por Token (Token tem preferência)
+Nesse exemplo as requisições serão feitas uma após a outra e a regra será validada
+```shell
+for i in {1..15}; do 
+  curl -s -i -H "API_KEY: meu-token-secreto" http://localhost:8080/
+  echo ""
+done
+```
+
+> Resultado esperado 10 sucesso e 5 falhas
+Exemplo do erro
+```text
+HTTP/1.1 429 Too Many Requests
+Content-Type: application/json
+Date: Sun, 11 Oct 2026 03:45:08 GMT
+Content-Length: 96
+
+"you have reached the maximum number of requests or actions allowed within a certain time frame"
+```
+
 # Regras de Negócio (Critérios de Limitação)
 O Rate Limiter deve operar com base em duas estratégias principais:
 
@@ -42,11 +172,11 @@ Configurações de conexão com Redis.
 # Entregável
 - [x] **Código Fonte:** Repositório contendo a implementação completa.
  **Infraestrutura:**
-- [ ] **Dockerfile para a aplicação:** docker-compose.yaml que suba a aplicação (na porta 8080) e o banco Redis.
-- [ ] **Documentação (README):** Explique como configurar o limiter, como alterar as estratégias e como executar o projeto.
-- [ ] **Testes Automatizados**: Testes que demonstrem a eficácia do limiter e a lógica de precedência (Token > IP).
+- [x] **Dockerfile para a aplicação:** docker-compose.yaml que suba a aplicação (na porta 8080) e o banco Redis.
+- [x] **Documentação (README):** Explique como configurar o limiter, como alterar as estratégias e como executar o projeto.
+- [x] **Testes Automatizados**: Testes que demonstrem a eficácia do limiter e a lógica de precedência (Token > IP).
  
 # Regras de Entrega
 - [x] **Repositório Único:** O repositório deve conter apenas o projeto em questão.
 - [x] **Branch Principal:** Todo o código deve estar na branch main.
-- [ ] **Execução:** O avaliador deve conseguir rodar o projeto e os testes utilizando apenas o Docker/Docker Compose.
+- [x] **Execução:** O avaliador deve conseguir rodar o projeto e os testes utilizando apenas o Docker/Docker Compose.
