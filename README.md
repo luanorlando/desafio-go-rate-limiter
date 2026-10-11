@@ -25,8 +25,6 @@ Para validação das regras os valores a serem alterados são
 |BLOCK_DURATION_MINUTES|5|
 
 > Altere os valores em .env 
-
-Exemplo do trecho com Docker
 ```go
 DEFAULT_LIMIT_IP=4
 DEFAULT_LIMIT_TOKEN=10
@@ -48,7 +46,6 @@ docker compose down
 Como Executar os Testes Automatizados suba o redis
 ```shell
 docker compose up -d redis
-# docker compose up --build app-test
 ```
 
 e depois rode os testes
