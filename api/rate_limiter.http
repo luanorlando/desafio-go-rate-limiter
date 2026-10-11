@@ -1,0 +1,16 @@
+### ==========================================
+### 1. TESTES DE IP
+### ==========================================
+
+### 1.1 Requisição normal por IP (Sucesso)
+GET http://localhost:8080/ HTTP/1.1
+Accept: application/json
+
+### ==========================================
+### 2. TESTES DE TOKEN
+### ==========================================
+
+### 2.1 Requisição normal usando o Header API_KEY (Sucesso com limite maior)
+GET http://localhost:8080/ HTTP/1.1
+API_KEY: meu-token-super-secreto-123
+Accept: application/json
